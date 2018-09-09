@@ -9,11 +9,14 @@ const {
 } = require('./lib/services/apiUtils')
 
 function registerRoutes (app) {
+  app.use(validateToken)
+
   app.get('/', (req, res) => {
     res.send(':D')
   })
 
-  app.post('/bets', validateToken, async (req, res) => {
+  app.post('/bets', async (req, res) => {
+    
     let {
       body: {
         gameId,
