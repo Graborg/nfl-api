@@ -1,0 +1,7 @@
+{
+    "host": "rethinkdb",
+    "port": 28015,
+    "db": "nfl",
+    "discovery": true,
+    "timeout": 60
+}
