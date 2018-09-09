@@ -43,6 +43,8 @@ function registerRoutes (app) {
 
   app.get(`/games`, async (req, res) => {
     if (await dataCollectedToday() || config.get('env') === 'DEVELOPMENT') {
+      console.log('getting data locally instead of from sportradar');
+      
       return dbAdapter.getGamesByWeek()
         .then(games => games.reduce(formatGamesFromUrl, {}))
         .then(games => {
