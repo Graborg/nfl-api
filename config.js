@@ -1,3 +1,4 @@
+const fs = require('fs')
 const nconf = require('nconf').env({
     separator: '__',
     lowerCase: true
@@ -17,4 +18,7 @@ nconf.defaults({
     'port': 7331
 })
 
+if (fs.existsSync('/run/secrets/sportRadarApiKey')) {
+    nconf.set('sportRadar:api_key', fs.readFileSync('/run/secrets/sportRadarApiKey', 'utf8'))
+}
 module.exports = nconf
