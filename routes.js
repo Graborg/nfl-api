@@ -33,8 +33,8 @@ function registerRoutes (app) {
       .then(() => res.sendStatus(200))
   })
 
-  app.get(`/bets`, validateToken, (req, res) => {
-    return dbAdapter.getUserBets(req.username)
+  app.get(`/bets`, validateToken, (_req, res) => {
+    return dbAdapter.getAllbets()
       .then(addBetSuccess)
       .then(bets => {
         res.json({
