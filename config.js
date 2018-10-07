@@ -11,6 +11,9 @@ nconf.file({
 })
 
 nconf.defaults({
+    rethinkdb: {
+        host: "localhost"
+    },
     sportRadar: {
         api_key: ''
     },
