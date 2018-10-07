@@ -9,14 +9,13 @@ const {
 } = require('./lib/services/apiUtils')
 
 function registerRoutes (app) {
-  app.use(validateToken)
 
   app.get('/', (req, res) => {
     res.send(':D')
   })
 
-  app.post('/bets', async (req, res) => {
-    
+  app.post('/bets', validateToken, async (req, res) => {
+
     let {
       body: {
         gameId,
@@ -34,7 +33,7 @@ function registerRoutes (app) {
       .then(() => res.sendStatus(200))
   })
 
-  app.get(`/bets`, (req, res) => {
+  app.get(`/bets`, validateToken, (req, res) => {
     return dbAdapter.getUserBets(req.username)
       .then(addBetSuccess)
       .then(bets => {
@@ -44,10 +43,10 @@ function registerRoutes (app) {
       })
   })
 
-  app.get(`/games`, async (req, res) => {
+  app.get(`/games`, validateToken, async(req, res) => {
     if (await dataCollectedToday() || config.get('env') === 'DEVELOPMENT') {
       console.log('getting data locally instead of from sportradar');
-      
+
       return dbAdapter.getGamesByWeek()
         .then(games => games.reduce(formatGamesFromUrl, {}))
         .then(games => {
@@ -63,7 +62,14 @@ function registerRoutes (app) {
         })
       })
   })
+
+  app.post('/auth', (req, res, next) => {
+    res.cookie('token', req.body.token, {secure: false})
+    res.sendStatus(200)
+    next()
+  })
 }
+
 
 module.exports = {
   registerRoutes
