@@ -7,7 +7,7 @@ const {
   getDataFromSportsRadar,
   addBetSuccess
 } = require('./lib/services/apiUtils')
-
+const moment = require('moment-timezone')
 function registerRoutes (app) {
 
   app.get('/', (req, res) => {
@@ -15,20 +15,13 @@ function registerRoutes (app) {
   })
 
   app.post('/bets', validateToken, async (req, res) => {
-
-    let {
-      body: {
-        gameId,
-        teamName,
-        outcome
-      },
-      username
-    } = req
-    const {
-      week
-    } = await dbAdapter.getGame(gameId)
-    // TODO: Check if past deadline
-
+    let { body: { gameId, teamName, outcome }, username } = req
+    const { week } = await dbAdapter.getGame(gameId)
+    const { scheduled } = await dbAdapter.getGame(gameId)
+    const gameDeadline = moment.tz(scheduled, 'Europe/Stockholm').subtract(1, 'hour')
+    if (moment().isAfter(gameDeadline)) {
+      return res.status(500).send('The deadline for this bet has closed')
+    }
     return dbAdapter.updateBet(username, gameId, teamName, outcome, week)
       .then(() => res.sendStatus(200))
   })
@@ -43,7 +36,7 @@ function registerRoutes (app) {
       })
   })
 
-  app.get(`/games`, validateToken, async(req, res) => {
+  app.get(`/games`, validateToken, async(_req, res) => {
     if (await dataCollectedToday() || config.get('env') === 'DEVELOPMENT') {
       console.log('getting data locally instead of from sportradar');
 
