@@ -1,14 +1,13 @@
 const fs = require('fs')
-const nconf = require('nconf').env({
-    separator: '__',
-    lowerCase: true
-})
+const nconf = require('nconf')
 
 nconf.file({
     file: 'config.json',
     dir: '../',
     search: true
 })
+nconf.argv()
+    .env()
 
 nconf.defaults({
     rethinkdb: {
@@ -18,7 +17,8 @@ nconf.defaults({
         api_key: ''
     },
     env: 'DEVELOP',
-    'port': 7331
+    'port': 7331,
+    frontendDomain: 'http://localhost:3333'
 })
 
 if (fs.existsSync('/run/secrets/sportRadarApiKey')) {
