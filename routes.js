@@ -54,7 +54,7 @@ function registerRoutes (app) {
 
 function isSundayEvening () {
   const isSunday = moment().isoWeekday() === 7
-  const isEvening = moment.tz('Europe/Stockholm').isAfter(moment().hour(17))
+  const isEvening = moment.tz('Europe/Stockholm').hour() > 17
 
   return isSunday && isEvening
 }
