@@ -1,6 +1,6 @@
 const dbAdapter = require('./lib/adapters/rethinkdb')
 const { validateToken } = require('./validateTokenMiddleware')
-const config = require('./config')
+const moment = require('moment')
 const {
   formatGamesFromUrl,
   dataCollectedToday,
@@ -26,7 +26,7 @@ function registerRoutes (app) {
   })
 
   app.get(`/games`, validateToken, async (_req, res) => {
-    if (await dataCollectedToday() || config.get('env') === 'DEVELOPMENT') {
+    if (!isSundayEvening() && await dataCollectedToday()) {
       console.log('getting data locally instead of from sportradar')
 
       return dbAdapter.getGamesByWeek()
@@ -50,6 +50,13 @@ function registerRoutes (app) {
     res.sendStatus(200)
     next()
   })
+}
+
+function isSundayEvening () {
+  const isSunday = moment().isoWeekday() === 7
+  const isEvening = moment().isAfter(moment().hour(17))
+
+  return isSunday && isEvening
 }
 
 module.exports = {
