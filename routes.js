@@ -1,5 +1,5 @@
 const dbAdapter = require('./lib/adapters/rethinkdb')
-const { validateToken } = require('./validateTokenMiddleware')
+const { validateToken, validateUser, validateTokenCookie } = require('./validateTokenMiddleware')
 const moment = require('moment')
 const {
   formatGamesFromUrl,
@@ -13,9 +13,9 @@ function registerRoutes (app) {
     res.send(':D')
   })
 
-  app.post('/bets', validateToken, makeBet)
+  app.post('/bets', validateTokenCookie, makeBet)
 
-  app.get(`/bets`, validateToken, (_req, res) => {
+  app.get(`/bets`, validateTokenCookie, (_req, res) => {
     return dbAdapter.getAllbets()
       .then(addBetSuccess)
       .then(bets => {
@@ -25,7 +25,7 @@ function registerRoutes (app) {
       })
   })
 
-  app.get(`/games`, validateToken, async (_req, res) => {
+  app.get(`/games`, validateTokenCookie, async (_req, res) => {
     if (!isSundayEvening() && await dataCollectedToday()) {
       console.log('getting data locally instead of from sportradar')
 
@@ -45,10 +45,17 @@ function registerRoutes (app) {
       })
   })
 
-  app.post('/auth', (req, res, next) => {
+  app.post('/auth', async (req, res, next) => {
     res.cookie('token', req.body.token, { secure: false })
-    res.sendStatus(200)
-    next()
+    let username, userId
+    try {
+      username = await validateToken(req.body.token)
+      userId = await validateUser(username)
+      res.send({ userId })
+      next()
+    } catch (e) {
+      res.status(401).json(`Error for user ${username}, ${e}`)
+    }
   })
 }
 
