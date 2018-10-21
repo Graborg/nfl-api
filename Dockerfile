@@ -2,7 +2,7 @@ FROM node:9
 
 WORKDIR /app
 COPY /lib /app/lib
-COPY /config.js /app/config.js
+COPY config.* /app/
 COPY /database.json /app/database.json
 COPY /index.js /app/index.js
 COPY /migrations /app/migrations
