@@ -1,6 +1,6 @@
 {
   "name": "nfl-project",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "An api for delivering game and user data",
   "main": "index.js",
   "scripts": {
