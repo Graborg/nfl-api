@@ -24,7 +24,7 @@ async function validateToken (token) {
   let username = result.data.email
   if (username === 'intemicke@gmail.com') {
     username = 'coolniclas@gmail.com'
-  } else if (username === 'mikael.graborg@iteam.com') {
+  } else if (username === 'mikael.graborg@iteam.se') {
     username = 'carlfredrikhenning.stenberg@gmail.com'
   }
   return username
