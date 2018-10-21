@@ -6,7 +6,7 @@
   "scripts": {
     "migrate": "rethink-migrate up",
     "start": "node index.js",
-    "start-prod": "node index.js --frontendDomain flaps-no-ip.info --rethinkdb:host rethinkdb",
+    "start-prod": "node index.js --rethinkdb:host rethinkdb",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mikael graborg",
